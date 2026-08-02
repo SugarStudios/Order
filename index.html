@@ -173,6 +173,16 @@ body{
     radial-gradient(circle at 20% 30%,rgba(255,255,255,.6) 0px,transparent 30px),
     radial-gradient(circle at 80% 70%,rgba(255,255,255,.5) 0px,transparent 40px);
 }
+.kit-photo{
+  position:relative;z-index:1;
+  width:130%;height:130%;
+  object-fit:contain;
+  display:block;margin:auto;
+  filter:drop-shadow(0 8px 18px rgba(42,24,16,.18));
+  transition:transform .3s ease;
+}
+.kit-card:hover .kit-photo{transform:scale(1.7) rotate(6deg);}
+.kit-img{display:flex;align-items:center;justify-content:center;}
 .kit-cookies{
   position:relative;z-index:1;
   display:grid;justify-items:center;align-items:center;
@@ -631,7 +641,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink);ba
     </div>
     <div class="kits-grid">
       <div class="kit-card reveal" onclick="selectKitHome('choc')">
-        <div class="kit-img"><div class="kit-cookies four"><span>🍪</span><span>🍪</span><span>🍪</span><span>🍪</span></div></div>
+        <div class="kit-img"><img class="kit-photo" src="https://sugarstudios.github.io/cookies/images/chocolate.png" alt="Chocolate Chip Cookie"></div>
         <div class="kit-info">
           <h3>🍫 Chocolate Chip</h3>
           <div class="desc">A classic · 4 cookies · 3 icing · 4 toppings</div>
@@ -640,7 +650,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink);ba
         </div>
       </div>
       <div class="kit-card reveal" onclick="selectKitHome('velvet')">
-        <div class="kit-img"><div class="kit-cookies four"><span>🍪</span><span>🍪</span><span>🍪</span><span>🍪</span></div></div>
+        <div class="kit-img"><img class="kit-photo" src="https://sugarstudios.github.io/cookies/images/velvet.png" alt="Red Velvet Cookie"></div>
         <div class="kit-info">
           <h3>❤️ Red Velvet</h3>
           <div class="desc">For the romantics · 4 cookies · 3 icing · 4 toppings</div>
@@ -649,7 +659,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink);ba
         </div>
       </div>
       <div class="kit-card reveal" onclick="selectKitHome('sugar')">
-        <div class="kit-img"><div class="kit-cookies four"><span>🍪</span><span>🍪</span><span>🍪</span><span>🍪</span></div></div>
+        <div class="kit-img"><img class="kit-photo" src="https://sugarstudios.github.io/cookies/images/sugar.png" alt="Sugar Cookie"></div>
         <div class="kit-info">
           <h3>🌸 Sugar Cookie</h3>
           <div class="desc">Buttery & soft · 4 cookies · 3 icing · 4 toppings</div>
@@ -772,6 +782,7 @@ function blank(){
           extraIcingCount:0, extraIcingSelections:[],
           extraToppingCount:0, extraToppingSelections:[],
           showAddons:false,
+          couponCode:"", couponDiscount:0,
           specialRequests:"",
           delivery:"pickup",
           paymentMethod:"bank",
@@ -786,7 +797,8 @@ function total(){
   t+=(O.extraIcingCount||0)*EXTRA_ICING_PRICE;
   t+=(O.extraToppingCount||0)*EXTRA_TOPPING_PRICE;
   if(O.delivery==='deliver' && O.deliveryFee) t+=O.deliveryFee;
-  return t;
+  if(O.couponDiscount>0) t=t*(1-O.couponDiscount/100);
+  return Math.max(0,Math.round(t*100)/100);
 }
 
 const $=s=>document.querySelector(s);
@@ -829,7 +841,7 @@ function renderForm(){
     <div class="card">
       <div class="step-head"><span class="step-num">1</span><h3>Your details</h3></div>
       <label class="lbl">Full name <span class="req">*</span></label>
-      <input type="text" id="f-name" value="${esc(O.name)}" placeholder="e.g. Mia Patel">
+      <input type="text" id="f-name" value="${esc(O.name)}" placeholder="Name here">
       <label class="lbl">Email <span class="req">*</span></label>
       <input type="email" id="f-email" value="${esc(O.email)}" placeholder="your@email.com">
     </div>
@@ -951,6 +963,16 @@ function renderForm(){
       </div>
     </div>
 
+    <div class="card">
+      <div class="step-head"><span class="step-num">5</span><h3>Got a coupon?</h3></div>
+      <div class="hint">Enter your coupon code below for a discount.</div>
+      <div style="display:flex;gap:8px;margin-bottom:6px;">
+        <input type="text" id="coupon-input" value="${esc(O.couponCode)}" placeholder="Enter code" oninput="this.value=this.value.toUpperCase()" style="margin-bottom:0;flex:1;text-transform:uppercase;letter-spacing:2px;font-weight:700;">
+        <button type="button" class="btn" style="padding:12px 18px;border-radius:13px;flex:0 0 auto;" onclick="applyCoupon()">Apply</button>
+      </div>
+      <div id="coupon-msg">${O.couponDiscount>0?`<div style="color:var(--matcha);font-weight:700;font-size:.85rem;">✅ Code applied — ${O.couponDiscount}% off!</div>`:''}</div>
+    </div>
+
     <div id="oErr"></div>
 
     <div class="totalbar">
@@ -991,6 +1013,7 @@ function renderReview(){
         ${O.extraCookies?`<div class="prow"><span>Extra cookies</span><span>+${O.extraCookies} × $${EXTRA_COOKIE_PRICE} = $${O.extraCookies*EXTRA_COOKIE_PRICE}</span></div>`:''}
         ${O.extraIcingCount?`<div class="prow"><span>Extra icings</span><span>${O.extraIcingSelections.filter(Boolean).join(', ')||'TBC'} +$${O.extraIcingCount*EXTRA_ICING_PRICE}</span></div>`:''}
         ${O.extraToppingCount?`<div class="prow"><span>Extra toppings</span><span>${O.extraToppingSelections.filter(Boolean).join(', ')||'TBC'} +$${O.extraToppingCount*EXTRA_TOPPING_PRICE}</span></div>`:''}
+        ${O.couponDiscount>0?`<div class="prow"><span>Coupon (${esc(O.couponCode)})</span><span>−${O.couponDiscount}%</span></div>`:''}
         ${O.delivery==='deliver' && O.deliveryFee?`<div class="prow"><span>Delivery</span><span>+$${O.deliveryFee.toFixed(2)}</span></div>`:''}
         <div class="prow"><span>Payment</span><span>${O.paymentMethod==='cash'?'💵 Cash at school':'💳 Bank transfer'}</span></div>
         <div class="prow"><span>Total</span><span>$${total().toFixed(2)}</span></div>
@@ -1134,6 +1157,8 @@ async function submitOrder(){
     extraIcingSelections:O.extraIcingSelections.filter(Boolean),
     extraToppingCount:O.extraToppingCount,
     extraToppingSelections:O.extraToppingSelections.filter(Boolean),
+    couponCode:O.couponCode||"",
+    couponDiscount:O.couponDiscount||0,
     specialRequests:O.specialRequests,
     total:total()
   };
@@ -1291,7 +1316,30 @@ footBrand.addEventListener('click', () => {
   clickBubble.classList.remove('show');
 });
 
-// ===== ADDRESS MAP + AUTOCOMPLETE =====
+// ===== COUPON CODES — add yours here =====
+const COUPONS = {
+  // "CODE": percentage_off
+  // e.g. "SAVE10": 10,
+  // "WELCOME20": 20,
+};
+
+function applyCoupon(){
+  const input = document.getElementById('coupon-input');
+  const msg = document.getElementById('coupon-msg');
+  if(!input||!msg) return;
+  const code = input.value.trim().toUpperCase();
+  if(!code){ msg.innerHTML=''; return; }
+  if(COUPONS[code]!==undefined){
+    O.couponCode = code;
+    O.couponDiscount = COUPONS[code];
+    msg.innerHTML=`<div style="color:var(--matcha);font-weight:700;font-size:.85rem;">✅ Code applied — ${COUPONS[code]}% off!</div>`;
+    updateTotal();
+  } else {
+    O.couponCode=''; O.couponDiscount=0;
+    msg.innerHTML=`<div style="color:var(--pink-deep);font-weight:700;font-size:.85rem;">❌ Invalid code</div>`;
+    updateTotal();
+  }
+}
 // Kitchen origin - 17 Newbury Place, Glenfield, Auckland (update lat/lon if needed)
 const KITCHEN_LAT = -36.7805;
 const KITCHEN_LON = 174.7180;
