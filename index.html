@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sugar Studio — Cookie Decorating Kits</title>
+<title>Sugar Studio | Cookie Decorating Kits</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -403,6 +403,46 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink);ba
 }
 .click-me-bubble.show{transform:translateX(-50%) scale(1);}
 @keyframes wiggle{0%,100%{transform:translateX(-50%) scale(1) rotate(0)}25%{transform:translateX(-50%) scale(1) rotate(-4deg)}75%{transform:translateX(-50%) scale(1) rotate(4deg)}}
+/* ===== POLICY MODAL ===== */
+#policy-modal{
+  display:none;position:fixed;inset:0;z-index:998;
+  background:rgba(42,24,16,.85);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:20px;
+}
+.pol-box{
+  background:var(--cream);border-radius:22px;overflow:hidden;
+  max-width:640px;width:100%;max-height:85vh;display:flex;flex-direction:column;
+  box-shadow:0 30px 80px rgba(0,0,0,.5);
+  animation:heroPop .35s cubic-bezier(.22,1,.36,1) both;
+}
+.pol-head{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:18px 22px;border-bottom:2px solid var(--line);background:#fff;flex:0 0 auto;
+}
+.pol-head h3{font-family:'Fraunces',serif;font-weight:900;font-size:1.25rem;}
+.pol-close{
+  background:var(--pink-bg);border:0;color:var(--cocoa);
+  width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;
+  transition:.15s;line-height:1;flex:0 0 auto;
+}
+.pol-close:hover{background:var(--pink);}
+.pol-body{padding:22px;overflow-y:auto;font-size:.9rem;line-height:1.65;color:var(--cocoa2);}
+.pol-body h4{
+  font-family:'Fraunces',serif;font-weight:800;font-size:1.05rem;color:var(--cocoa);
+  margin:22px 0 8px;
+}
+.pol-body h4:first-child{margin-top:0;}
+.pol-body p{margin-bottom:10px;}
+.pol-body b{color:var(--cocoa);}
+.pol-allergen{
+  background:#FFF4E0;border:2px solid #E8B84B;border-radius:12px;
+  padding:13px 16px;margin-bottom:16px;font-size:.87rem;line-height:1.55;color:var(--cocoa);
+}
+@media(max-width:600px){
+  .pol-box{max-height:90vh;}
+  .pol-head h3{font-size:1.08rem;}
+  .pol-body{font-size:.86rem;padding:18px;}
+}
 .foot{background:var(--cocoa);color:var(--cream);padding:60px 20px 30px;text-align:center;}
 .foot-brand{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(2.5rem,8vw,5rem);letter-spacing:-2px;line-height:.95;margin-bottom:10px;}
 .foot p{opacity:.7;font-size:.92rem;}
@@ -616,7 +656,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink);ba
     <div class="nav-links">
       <a href="#kits">Our Kits</a>
       <a href="#how">How it works</a>
-      <a href="#order" class="nav-cta">Order now</a>
+      <a href="#order" class="nav-cta" onclick="trackClick('nav_order_now')">Order now</a>
     </div>
   </div>
 </nav>
@@ -625,9 +665,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink);ba
 <section class="hero">
   <div class="hero-eyebrow"><span class="dot"></span>Now taking orders · ASHS</div>
   <h1 class="mega-title">Sugar <em>Studio</em></h1>
-  <p class="hero-sub">Pre-baked cookies, dreamy icing, and your favourite toppings — all in one box. No oven, no stress, just decorating fun.</p>
+  <p class="hero-sub">Your cookies, your rules. Pick your flavour, choose your icings, pile on the toppings, and design a kit that's completely your own. We bake them, you make them yours.</p>
   <div class="hero-cta-row">
-    <a href="#order" class="btn-pill">Order your kit →</a>
+    <a href="#order" class="btn-pill" onclick="trackClick('hero_order_cta')">Order your kit →</a>
   </div>
 </section>
 
@@ -637,7 +677,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink);ba
     <div class="section-head">
       <div class="eyebrow">Our Kits</div>
       <h2 class="h-title">Cookies that <em>actually</em> taste good.</h2>
-      <p class="h-sub">Every kit is a 4-pack with 3 icings, 4 toppings, and your pick of cookie flavour. Three flavours, five icings, eleven toppings — endless combos.</p>
+      <p class="h-sub">Every kit is a 4-pack with 3 icings, 4 toppings, and your pick of cookie flavour. Three flavours, five icings, eleven toppings, endless combos.</p>
     </div>
     <div class="kits-grid">
       <div class="kit-card reveal" onclick="selectKitHome('choc')">
@@ -695,7 +735,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink);ba
         <div class="num">3</div>
         <span class="emo">🎨</span>
         <h3>Decorate & enjoy</h3>
-        <p>Get decorating with your people — no oven, no mess, just fun.</p>
+        <p>Get decorating with your people. No oven, no mess, just fun.</p>
       </div>
     </div>
   </div>
@@ -713,7 +753,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink);ba
     <div class="order-heading">
       <div class="eyebrow">Order</div>
       <h2 class="h-title">Build your <em>kit</em></h2>
-      <p class="h-sub">Fill in everything below — we'll send you a confirmation.</p>
+      <p class="h-sub">Fill in everything below and we'll send you a confirmation.</p>
     </div>
     <div id="view"></div>
   </div>
@@ -721,7 +761,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink);ba
 
 <!-- ========== FOOTER ========== -->
 <footer class="foot">
-  <div class="foot-brand" id="foot-brand" onclick="openCookiePong()" title="🍪">
+  <div class="foot-brand" id="foot-brand" onclick="openCookiePong();trackClick('easter_egg_pong')" title="🍪">
     <span class="click-me-bubble" id="click-bubble">🍪 click me!</span>
     Sugar Studio
   </div>
@@ -729,14 +769,61 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink);ba
   <div class="socials">
     <span>📷</span><span>🎵</span><span>📧</span>
   </div>
-  <div class="copy">© 2026 Sugar Studio. Made with 🍪 by Year 13.</div>
+  <div class="copy">
+    <a href="#" onclick="openPolicies();return false;" style="color:inherit;text-decoration:underline;">Privacy &amp; Terms</a><br><br>
+    © 2026 Sugar Studio. Made with 🍪 by Year 13.
+  </div>
 </footer>
+
+<!-- ===== PRIVACY & TERMS MODAL ===== -->
+<div id="policy-modal" onclick="if(event.target===this)closePolicies()">
+  <div class="pol-box">
+    <div class="pol-head">
+      <h3>Privacy &amp; Terms</h3>
+      <button class="pol-close" onclick="closePolicies()">✕</button>
+    </div>
+    <div class="pol-body">
+      <div class="pol-allergen">
+        <b>⚠️ Allergens:</b> made in a home kitchen that handles wheat, gluten, dairy, eggs,
+        soy, peanuts and tree nuts. We can't guarantee any kit is free from traces of these,
+        so please don't order if you have a severe allergy.
+      </div>
+
+      <h4>Privacy</h4>
+      <p>We collect only what we need to fulfil your order: your <b>name and email</b>, plus a
+      <b>delivery address</b> if you choose delivery.</p>
+      <p>We use it to prepare and deliver your order and to contact you if there's a problem.
+      We never sell or share your details, and we don't send marketing emails.</p>
+      <p>Order details are stored in a private Google Sheet accessible only to the Sugar Studio
+      team. We also log anonymous click activity on this site to improve the page, which isn't
+      linked to your name or email.</p>
+      <p>Under the <b>Privacy Act 2020</b> you can ask to see, correct or delete the information
+      we hold about you. Just email us.</p>
+
+      <h4>Terms of use</h4>
+      <p>Sugar Studio is a student-run enterprise operated by Year 13 students at ASHS. Placing
+      an order means you agree to these terms.</p>
+      <p><b>Orders:</b> submitting the form is a request, not a confirmed order. We'll email you
+      to confirm. Prices are in NZD.</p>
+      <p><b>Payment:</b> bank transfer before collection or delivery, or cash at school for
+      pickup orders. We don't store card details anywhere on this site.</p>
+      <p><b>Changes &amp; refunds:</b> you can change or cancel free up to <b>48 hours</b> before
+      your collection date. As our products are perishable and made to order, we can't refund
+      change of mind. If something arrives damaged or incorrect, contact us within 24 hours with
+      a photo and we'll replace or refund it. This doesn't limit your rights under the
+      <b>Consumer Guarantees Act 1993</b> and <b>Fair Trading Act 1986</b>.</p>
+      <p><b>Storage:</b> keep kits cool and dry, best within 5 days.</p>
+      <p>Product images are a guide and actual kits may vary slightly. We may decline or cancel
+      any order with a full refund. Governed by New Zealand law.</p>
+    </div>
+  </div>
+</div>
 
 <!-- ===== COOKIE PONG EASTER EGG ===== -->
 <div id="pong-modal">
   <div class="pong-box">
     <div class="pong-header">
-      <span>🍪 Cookie Pong — secret unlocked!</span>
+      <span>🍪 Cookie Pong: secret unlocked!</span>
       <button class="pong-close" onclick="closeCookiePong()">✕</button>
     </div>
     <canvas id="pong-canvas" width="580" height="370"></canvas>
@@ -746,6 +833,64 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink);ba
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwc3OXdo5Q9dNnvJJWbcqd2bFFwL7eW0stVap9aRvRvoI1QFNmk-tFV9VRQt7xw6zwD/exec";
+
+// ===== CLICK ANALYTICS =====
+// Separate Apps Script Web App so it can never interfere with the Orders sheet.
+// Paste your deployed /exec URL here once you've set it up (see instructions).
+const CLICK_SCRIPT_URL = "PASTE_YOUR_CLICK_TRACKING_SCRIPT_URL_HERE";
+
+// One ID per browser tab session, so we can tell how many unique
+// visits there were and which ones ended in an order.
+const SESSION_ID = (function(){
+  try{
+    let id = sessionStorage.getItem('ss_sid');
+    if(!id){
+      id = (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2)));
+      sessionStorage.setItem('ss_sid', id);
+    }
+    return id;
+  }catch(e){ return 'nostorage-'+Date.now()+'-'+Math.random().toString(36).slice(2); }
+})();
+
+let orderCompleted = false; // set true once an order is successfully placed this visit
+
+function trackClick(label, useBeacon){
+  if(!CLICK_SCRIPT_URL || CLICK_SCRIPT_URL.indexOf("PASTE_YOUR")===0) return; // not set up yet
+  const payload = JSON.stringify({
+    label:label,
+    sessionId:SESSION_ID,
+    page:window.location.pathname,
+    referrer:document.referrer||"",
+    timestamp:new Date().toISOString()
+  });
+  try{
+    if(useBeacon && navigator.sendBeacon){
+      navigator.sendBeacon(CLICK_SCRIPT_URL, new Blob([payload],{type:"text/plain"}));
+    }else{
+      fetch(CLICK_SCRIPT_URL,{
+        method:"POST", mode:"no-cors", keepalive:true,
+        headers:{"Content-Type":"application/json"},
+        body:payload
+      });
+    }
+  }catch(e){ /* fail silently, never block the UI */ }
+}
+
+// Fires once per visit, as soon as the page loads.
+trackClick('page_view');
+
+// Fires once per visit when someone leaves WITHOUT completing an order,
+// so you can see how many people browsed but didn't buy.
+let exitTracked = false;
+function trackExitIfNeeded(){
+  if(exitTracked || orderCompleted) return;
+  exitTracked = true;
+  trackClick('left_without_ordering', true);
+}
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'hidden') trackExitIfNeeded();
+});
+window.addEventListener('pagehide', trackExitIfNeeded);
 
 const NORTH_SHORE_SUBURBS = [
   "Albany","Bayview","Bayswater","Beach Haven","Belmont","Birkdale","Birkenhead",
@@ -809,8 +954,19 @@ function syncText(){
 }
 function scrollToOrder(){document.getElementById("order").scrollIntoView({behavior:"smooth"});}
 
+function openPolicies(){
+  document.getElementById('policy-modal').style.display='flex';
+  trackClick('open_privacy_terms');
+}
+function closePolicies(){
+  document.getElementById('policy-modal').style.display='none';
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape') closePolicies();
+});
+
 function selectPack(packKey){
-  // Legacy — kept for compatibility
+  // Legacy, kept for compatibility
   scrollToOrder();
 }
 
@@ -823,6 +979,7 @@ function selectKitHome(kitId){
   stage = "form";
   render();
   scrollToOrder();
+  trackClick("kit_select_"+kitId);
 }
 
 function render(){
@@ -848,7 +1005,7 @@ function renderForm(){
 
     <div class="card">
       <div class="step-head"><span class="step-num">2</span><h3>Order &amp; customise your kit</h3></div>
-      <div class="hint">Every kit is a 4-pack with premade icings & toppings — add extras below if you want.</div>
+      <div class="hint">Every kit is a 4-pack with premade icings &amp; toppings. Add extras below if you want.</div>
       <div class="opts">
         ${Object.entries(KITS).map(([id,v])=>`
           <label class="opt ${O.kit===id?'sel':''}" onclick="pick('kit','${id}')" style="align-items:flex-start;">
@@ -908,14 +1065,14 @@ function renderForm(){
           <input type="radio" name="delivery" ${O.delivery==='pickup'?'checked':''}>
           <div>
             <div class="ot">🏫 Pick up at ASHS</div>
-            <div class="od">Free — collect at school</div>
+            <div class="od">Free, collect at school</div>
           </div>
         </label>
         <label class="opt ${O.delivery==='deliver'?'sel':''}" onclick="pick('delivery','deliver')">
           <input type="radio" name="delivery" ${O.delivery==='deliver'?'checked':''}>
           <div>
             <div class="ot">🚗 Delivery</div>
-            <div class="od">We'll come to you — fee based on location</div>
+            <div class="od">We'll come to you, fee based on location</div>
           </div>
         </label>
       </div>
@@ -928,7 +1085,7 @@ function renderForm(){
         <div id="addr-suggestions" class="addr-suggestions"></div>
         <label class="lbl">Suburb <span class="req">*</span></label>
         <select id="f-suburb" onchange="O.suburb=this.value;triggerAddressMap()">
-          <option value="">— select suburb —</option>
+          <option value="">Select suburb...</option>
           ${NORTH_SHORE_SUBURBS.map(s=>`<option ${O.suburb===s?'selected':''}>${s}</option>`).join('')}
         </select>
         <div class="map-wrap">
@@ -970,7 +1127,7 @@ function renderForm(){
         <input type="text" id="coupon-input" value="${esc(O.couponCode)}" placeholder="Enter code" oninput="this.value=this.value.toUpperCase()" style="margin-bottom:0;flex:1;text-transform:uppercase;letter-spacing:2px;font-weight:700;">
         <button type="button" class="btn" style="padding:12px 18px;border-radius:13px;flex:0 0 auto;" onclick="applyCoupon()">Apply</button>
       </div>
-      <div id="coupon-msg">${O.couponDiscount>0?`<div style="color:var(--matcha);font-weight:700;font-size:.85rem;">✅ Code applied — ${O.couponDiscount}% off!</div>`:''}</div>
+      <div id="coupon-msg">${O.couponDiscount>0?`<div style="color:var(--matcha);font-weight:700;font-size:.85rem;">✅ Code applied: ${O.couponDiscount}% off!</div>`:''}</div>
     </div>
 
     <div id="oErr"></div>
@@ -1007,7 +1164,7 @@ function renderReview(){
 
       <div class="paybox pink">
         <h4>🍪 Your kit</h4>
-        <div class="prow"><span>Kit</span><span>${k.emoji} ${k.name} — $${k.price}</span></div>
+        <div class="prow"><span>Kit</span><span>${k.emoji} ${k.name}: $${k.price}</span></div>
         <div class="prow"><span>Icings</span><span>${k.icings.join(', ')}</span></div>
         <div class="prow"><span>Toppings</span><span>${k.toppings.join(', ')}</span></div>
         ${O.extraCookies?`<div class="prow"><span>Extra cookies</span><span>+${O.extraCookies} × $${EXTRA_COOKIE_PRICE} = $${O.extraCookies*EXTRA_COOKIE_PRICE}</span></div>`:''}
@@ -1096,7 +1253,7 @@ function updateExtraTopping(val){
   wrap.innerHTML=Array.from({length:O.extraToppingCount}).map((_,i)=>`
     <label class="lbl">Extra topping ${i+1}</label>
     <select onchange="setExtraTopping(${i},this.value)">
-      <option value="">— choose —</option>
+      <option value="">Choose...</option>
       ${TOPPINGS.map(t=>`<option ${(O.extraToppingSelections[i]||'')=== t?'selected':''}>${t}</option>`).join('')}
     </select>`).join('');
 }
@@ -1110,7 +1267,7 @@ function updateExtraIcing(val){
   wrap.innerHTML=Array.from({length:O.extraIcingCount}).map((_,i)=>`
     <label class="lbl">Extra icing ${i+1}</label>
     <select onchange="setExtraIcing(${i},this.value)">
-      <option value="">— choose —</option>
+      <option value="">Choose...</option>
       ${ICINGS.map(ic=>`<option ${(O.extraIcingSelections[i]||'')=== ic?'selected':''}>${ic}</option>`).join('')}
     </select>`).join('');
 }
@@ -1132,9 +1289,10 @@ function goReview(){
   }
   stage="review"; render();
   scrollToOrder();
+  trackClick("review_order");
 }
 
-function goBack(){stage="form";render();scrollToOrder();}
+function goBack(){stage="form";render();scrollToOrder();trackClick("edit_order");}
 
 async function submitOrder(){
   const btn=$("#submitBtn");
@@ -1170,6 +1328,8 @@ async function submitOrder(){
     });
     stage="done"; render();
     scrollToOrder();
+    orderCompleted = true;
+    trackClick("order_placed_"+O.kit);
   }catch(e){
     btn.disabled=false; btn.textContent="Confirm & place order ✓";
     $("#oErr").innerHTML=`<div class="err">Couldn't send your order. Check your connection and try again.</div>`;
@@ -1316,7 +1476,7 @@ footBrand.addEventListener('click', () => {
   clickBubble.classList.remove('show');
 });
 
-// ===== COUPON CODES — add yours here =====
+// ===== COUPON CODES: add yours here =====
 const COUPONS = {
   // "CODE": percentage_off
   // e.g. "SAVE10": 10,
@@ -1332,7 +1492,7 @@ function applyCoupon(){
   if(COUPONS[code]!==undefined){
     O.couponCode = code;
     O.couponDiscount = COUPONS[code];
-    msg.innerHTML=`<div style="color:var(--matcha);font-weight:700;font-size:.85rem;">✅ Code applied — ${COUPONS[code]}% off!</div>`;
+    msg.innerHTML=`<div style="color:var(--matcha);font-weight:700;font-size:.85rem;">✅ Code applied: ${COUPONS[code]}% off!</div>`;
     updateTotal();
   } else {
     O.couponCode=''; O.couponDiscount=0;
