@@ -835,9 +835,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pink);ba
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwc3OXdo5Q9dNnvJJWbcqd2bFFwL7eW0stVap9aRvRvoI1QFNmk-tFV9VRQt7xw6zwD/exec";
 
 // ===== CLICK ANALYTICS =====
-// Separate Apps Script Web App so it can never interfere with the Orders sheet.
-// Paste your deployed /exec URL here once you've set it up (see instructions).
-const CLICK_SCRIPT_URL = "PASTE_YOUR_CLICK_TRACKING_SCRIPT_URL_HERE";
+// Uses the SAME Apps Script deployment as orders (SCRIPT_URL above).
+// Every click event is tagged type:"click" so the script routes it to the
+// "Clicks" tab instead of treating it as an order. Nothing extra to deploy.
 
 // One ID per browser tab session, so we can tell how many unique
 // visits there were and which ones ended in an order.
@@ -855,8 +855,8 @@ const SESSION_ID = (function(){
 let orderCompleted = false; // set true once an order is successfully placed this visit
 
 function trackClick(label, useBeacon){
-  if(!CLICK_SCRIPT_URL || CLICK_SCRIPT_URL.indexOf("PASTE_YOUR")===0) return; // not set up yet
   const payload = JSON.stringify({
+    type:"click",
     label:label,
     sessionId:SESSION_ID,
     page:window.location.pathname,
@@ -865,9 +865,9 @@ function trackClick(label, useBeacon){
   });
   try{
     if(useBeacon && navigator.sendBeacon){
-      navigator.sendBeacon(CLICK_SCRIPT_URL, new Blob([payload],{type:"text/plain"}));
+      navigator.sendBeacon(SCRIPT_URL, new Blob([payload],{type:"text/plain"}));
     }else{
-      fetch(CLICK_SCRIPT_URL,{
+      fetch(SCRIPT_URL,{
         method:"POST", mode:"no-cors", keepalive:true,
         headers:{"Content-Type":"application/json"},
         body:payload
@@ -1299,6 +1299,7 @@ async function submitOrder(){
   btn.disabled=true; btn.textContent="Sending…";
   const k=KITS[O.kit];
   const payload={
+    type:"order",
     createdAt:new Date().toISOString(),
     name:O.name.trim(), email:O.email.trim(),
     delivery:O.delivery,
